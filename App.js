@@ -14,7 +14,15 @@ export default class LIstaTarefasOnline extends Component{
 
       this.url = 'https://b7web.com.br/todo/19127';
       this.loadLista = this.loadLista.bind(this);
-      this.addTask = this.addTask.bind(this);
+      this.addTask = this.addTask.bind(this); 
+      
+      fetch(this.url)
+    .then((r) => r.json())
+    .then((json) =>{
+      let s = this.state;
+      s.lista = json.todo;
+      this.setState(s);
+    });
   }
 
   loadLista(){
