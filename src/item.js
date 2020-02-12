@@ -58,20 +58,22 @@ export default class Item extends Component {
         return(
             <View style={styles.area}>
                 <TouchableHighlight style={[styles.marcarArea, this.state.done]} onPress={this.concluirTask}>
-                    <View>
-                       
+                    <View></View>
+                </TouchableHighlight>
+                <View style={styles.viewItem}>
+                    <Text style={styles.tituloItem}>{this.props.data.item}</Text>       
+                    <View style={styles.viewClear}>
+                    <TouchableHighlight style={styles.botaoDelete} onPress={this.deleteTask}>                
+                        <Image source={require('./imagens/clear.png')} style={styles.imagemLixeira}/>            
+                    </TouchableHighlight>
                     </View>
-                </TouchableHighlight>
-                <Text>{this.props.data.item}</Text>
-
-                <TouchableHighlight style={styles.botaoDelete} onPress={this.deleteTask}>                
-                   <Image source={require('./imagens/lixeira.png')} style={styles.imagemLixeira}/>            
-                </TouchableHighlight>
+                </View>
+               
             </View>
         );
     }
 }
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
     area:{
         paddingTop:10,
         paddingBottom: 10,
@@ -83,10 +85,9 @@ const styles = StyleSheet.create({
         alignItems:'center'
     },
     marcarArea:{
-      width: 40,
-      height: 40,
-      marginLeft:10,
-      marginRight: 10,
+      width: 30,
+      height: 30,
+      margin:10,
       borderRadius:10        
     },
     undone:{
@@ -95,13 +96,20 @@ const styles = StyleSheet.create({
     done:{
         backgroundColor: '#5cb85c'
     },
-    botaoDelete:{
-      
-    },
     imagemLixeira:{
-        width:25,
-        height:25
-                
+        width:30,
+        height:30,                        
+    },
+    tituloItem:{
+        fontSize: 14,
+        fontWeight: 'bold'
+    },
+    viewItem:{
+        flexDirection:'column',
+        flex: 1,              
+    },
+    viewClear:{
+        alignItems: 'flex-end',
+               
     }
-    
 });

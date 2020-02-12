@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import {SafeAreaView,StyleSheet,ScrollView,View,Text,StatusBar,FlatList, TextInput, Button, Alert} from 'react-native';
+import {SafeAreaView,StyleSheet,ScrollView,View,Text,StatusBar,FlatList, TextInput, Button, Alert, ImageBackground
+} from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import {Header,LearnMoreLinks,Colors,DebugInstructions,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import Item from './src/item.js';
 
@@ -9,20 +11,27 @@ export default class LIstaTarefasOnline extends Component{
     super(props);
     this.state = {
       lista: [],
-      input:''
+      input:'',
+      netStatus: 0
     };
 
       this.url = 'https://b7web.com.br/todo/19127';
       this.loadLista = this.loadLista.bind(this);
       this.addTask = this.addTask.bind(this); 
+      this.conEvent = this.conEvent.bind(this);      
       
-      fetch(this.url)
-    .then((r) => r.json())
-    .then((json) =>{
-      let s = this.state;
-      s.lista = json.todo;
-      this.setState(s);
-    });
+     this.loadLista();
+  }
+
+
+  conEvent(info){
+    let state = this.state
+    if(info.type == false){
+      state.netStatus = 0;
+    } else {
+      state.netStatus = 1;
+    }
+    this.setState(state);
   }
 
   loadLista(){
@@ -45,25 +54,30 @@ export default class LIstaTarefasOnline extends Component{
     s.input = '';
     this.setState(s);
     
-    fetch(this.url, {
-      method: 'POST',
-      headers:{
-        'Accept':'application/json',
-        'Content-Type': 'application/json'
-      },
-      body:JSON.stringify({
-        item: texto
+    if(this.state.netStatus ==1){
+      fetch(this.url, {
+        method: 'POST',
+        headers:{
+          'Accept':'application/json',
+          'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({
+          item: texto
+        })
       })
-    })
-      .then((r) => r.json())
-      .then((json) => {        
-        this.loadLista();
-      })
+        .then((r) => r.json())
+        .then((json) => {        
+          this.loadLista();
+        })
+    } else {
+      alert.Alert('Falha','Erro ao adicionar o Item, você está sem conexão com a internet');
+    }
   }
 
   render(){
     return (
-      <View style={styles.contanier}>        
+      <View style={styles.contanier}>
+        <ImageBackground source={require('./src/imagens/background1.png')} style={styles.bgImage}>
         <View style={styles.addArea}>
         <Text style={styles.tituloText}>Lista de Tarefas</Text>
           <Text style={styles.addText}> Adicione uma nova Tarefa</Text>  
@@ -77,6 +91,10 @@ export default class LIstaTarefasOnline extends Component{
         <FlatList data={this.state.lista} renderItem={({item})=> <Item data={item} url={this.url} loadFunction={this.loadLista} />}
         keyExtractor={(item, index) => (item.id)}
         />
+        <View style={styles.statusView}>
+          <Text style={styles.statusText}>{this.state.netStatus} </Text>
+        </View>
+        </ImageBackground>        
       </View> 
     );
   }
@@ -98,7 +116,8 @@ const styles = StyleSheet.create({
     marginRight:20,
     paddingLeft:10,
     paddingRight:10,
-    marginBottom:10
+    marginBottom:10,
+    borderRadius:400
   },
   addText:{
     fontSize:15,
@@ -116,5 +135,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color:'#0275d8',
     fontWeight:'bold'
+  },
+  bgImage:{
+    flex: 1,
+    width: null
+  },
+  statusView:{
+    height:50    
+  },
+  statusText:{
+    fontSize:23,
+    textAlign:'center'
   }
 });
